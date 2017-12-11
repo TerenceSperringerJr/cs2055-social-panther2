@@ -34,7 +34,7 @@ declare
 		TEST_FRIEND_ID2 := CREATE_USER(TEST_NAME, TEST_EMAIL, TEST_DOB);
 		TEST_FRIEND_ID3 := CREATE_USER(TEST_NAME, TEST_EMAIL, TEST_DOB);
 		
-		if TEST_USERID = NULL then
+		if TEST_USERID is null then
 			dbms_output.put_line('Error: GENERAL_TEST Failed CREATE_USER(' || TEST_NAME || ', ' || TEST_EMAIL || ', ' || TEST_DOB || ')');
 			TEST_ERRORS := TEST_ERRORS + 1;
 		end if;
@@ -68,22 +68,18 @@ declare
 		--THREE_DEGREES direct friendship
 		TEST_FRIENDSHIP := THREE_DEGREES(TEST_USERID, TEST_FRIEND_ID);
 		
-		if TEST_FRIENDSHIP.USER1 = null then
+		if TEST_FRIENDSHIP.USER1 is null then
 			dbms_output.put_line('Error: GENERAL_TEST Failed THREE_DEGREES(' || TEST_USERID || ', ' || TEST_FRIEND_ID || ') for false negative on direct friendship');
 			TEST_ERRORS := TEST_ERRORS + 1;
-else
-dbms_output.put_line('[' || TEST_FRIENDSHIP.USER1 || ', ' || TEST_FRIENDSHIP.USER1_FRIEND || ', ' || TEST_FRIENDSHIP.USER2_FRIEND || ', ' || TEST_FRIENDSHIP.USER2 || ']');
 		end if;
 		
 		--THREE_DEGREES no relationship
 		delete from FRIENDS where (USERID1 = TEST_USERID and USERID2 = TEST_FRIEND_ID);
 		TEST_FRIENDSHIP := THREE_DEGREES(TEST_USERID, TEST_FRIEND_ID);
 		
-		if TEST_FRIENDSHIP.USER1 <> null then
+		if (TEST_FRIENDSHIP.USER1 is null) = false then
 			dbms_output.put_line('Error: GENERAL_TEST Failed THREE_DEGREES(' || TEST_USERID || ', ' || TEST_FRIEND_ID || ') for false positive');
 			TEST_ERRORS := TEST_ERRORS + 1;
-else
-dbms_output.put_line('[' || TEST_FRIENDSHIP.USER1 || ', ' || TEST_FRIENDSHIP.USER1_FRIEND || ', ' || TEST_FRIENDSHIP.USER2_FRIEND || ', ' || TEST_FRIENDSHIP.USER2 || ']');
 		end if;
 		
 		--THREE_DEGREES common friend
@@ -94,12 +90,10 @@ dbms_output.put_line('[' || TEST_FRIENDSHIP.USER1 || ', ' || TEST_FRIENDSHIP.USE
 		
 		TEST_FRIENDSHIP := THREE_DEGREES(TEST_USERID, TEST_FRIEND_ID);
 		
-		--TODO! THIS SHOULD FAIL RIGHT NOW!
-		if TEST_FRIENDSHIP.USER1 = null then
+		--TODO! FIX THREE_DEGREES for 2nd degree friendship
+		if ((TEST_FRIENDSHIP.USER1 is null) or (TEST_FRIENDSHIP.USER2 is null)) then
 			dbms_output.put_line('Error: GENERAL_TEST Failed THREE_DEGREES(' || TEST_USERID || ', ' || TEST_FRIEND_ID || ') for false negative on 2nd degree friendship');
 			TEST_ERRORS := TEST_ERRORS + 1;
-else
-dbms_output.put_line('[' || TEST_FRIENDSHIP.USER1 || ', ' || TEST_FRIENDSHIP.USER1_FRIEND || ', ' || TEST_FRIENDSHIP.USER2_FRIEND || ', ' || TEST_FRIENDSHIP.USER2 || ']');
 		end if;
 		
 		--THREE_DEGREES friends are friends
@@ -114,9 +108,9 @@ dbms_output.put_line('[' || TEST_FRIENDSHIP.USER1 || ', ' || TEST_FRIENDSHIP.USE
 		delete from FRIENDS where (USERID1 = TEST_FRIEND_ID2 or USERID2 = TEST_FRIEND_ID2);
 		delete from FRIENDS where (USERID1 = TEST_FRIEND_ID3 or USERID2 = TEST_FRIEND_ID3);
 		
-		--TODO! THIS SHOULD FAIL RIGHT NOW!
-		if ((TEST_FRIENDSHIP.USER1 = null) or (TEST_FRIENDSHIP.USER2 = null) or (TEST_FRIENDSHIP.USER1_FRIEND = null) or (TEST_FRIENDSHIP.USER2_FRIEND = null)) then
-			dbms_output.put_line('Error: GENERAL_TEST Failed THREE_DEGREES(' || TEST_USERID || ', ' || TEST_FRIEND_ID || ') for false negative on 2nd degree friendship');
+		--TODO! FIX THREE_DEGREES for 3rd degree friendship
+		if ((TEST_FRIENDSHIP.USER1 is null) or (TEST_FRIENDSHIP.USER2 is null) or (TEST_FRIENDSHIP.USER1_FRIEND is null) or (TEST_FRIENDSHIP.USER2_FRIEND is null)) then
+			dbms_output.put_line('Error: GENERAL_TEST Failed THREE_DEGREES(' || TEST_USERID || ', ' || TEST_FRIEND_ID || ') for false negative on 3rd degree friendship');
 			TEST_ERRORS := TEST_ERRORS + 1;
 		end if;
 		
@@ -163,7 +157,7 @@ begin
 	
 	--Print summary
 	if ALL_ERRORS > 0 then
-		dbms_output.put_line('All tests had '|| ALL_ERRORS ||' error(s)!!');
+		dbms_output.put_line('Tests had '|| ALL_ERRORS ||' error(s)!!');
 	else
 		dbms_output.put_line('All tests passed with no errors =)');
 	end if;

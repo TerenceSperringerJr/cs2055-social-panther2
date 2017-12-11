@@ -110,32 +110,32 @@ begin
 			where (USERID1 = USER_A and USERID2 = USER_B) or (USERID1 = USER_B and USERID2 = USER_A);
 	exception
 		when NO_DATA_FOUND then
-			RELATION_FOUND := false;
 			FRIENDSHIP.USER1 := null;
 	end;
 	
-	if RELATION_FOUND then
+	if (FRIENDSHIP.USER1 is null) = false then
 		return FRIENDSHIP;
 	end if;
 	
-	RELATION_FOUND := true;
+	/*
 	begin
 		--TODO! This is broken and doesn't work.
-		--Search for Friend in common
+		--Search for Friend-in-common
 		select * into RELATIONSHIP
 			from
-				((select * from FRIENDS where (USERID1 = USER_A or USERID2 = USER_A) as A_FRIENDS)
+				((select USER from FRIENDS where (USERID1 = USER_A or USERID2 = USER_A) as A_FRIENDS)
 				inner join
 				(select * from FRIENDS where (USERID1 = USER_B or USERID2 = USER_B) as B_FRIENDS)
 					on A_FRIENDS.USERID2 = B_FRIENDS.USERID2);
 	exception
 		when NO_DATA_FOUND then
-			RELATIONSHIP.USERID1 := null;
+			RELATION_FOUND := false;
 	end;
 	
-	if RELATIONSHIP.USERID1 <> null then
+	if RELATION_FOUND then
 		FRIENDSHIP.USER1 := USER_A;
 		FRIENDSHIP.USER2 := USER_B;
+		FRIENDSHIP.USER1_FRIEND := ...;
 		
 		return FRIENDSHIP;
 	end if;
