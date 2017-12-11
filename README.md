@@ -11,7 +11,6 @@ Now it's just me: tps23
 	a. add the following to config.txt (no brackets):
 
 		name: (pitt ID)
-		
 		pass: (database password)
 
 
