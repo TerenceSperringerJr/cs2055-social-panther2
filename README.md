@@ -7,7 +7,8 @@ Now it's just me: tps23
 
 ## Instructions: ##
 1. Add config.txt into java directory
-	1.a. add the following to config.txt (no brackets):
+
+	a. add the following to config.txt (no brackets):
 
 name: (pitt ID)
 
