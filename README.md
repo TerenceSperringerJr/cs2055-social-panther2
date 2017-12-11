@@ -8,7 +8,7 @@ Now it's just me: tps23
 ## Instructions: ##
 1. Add `config.txt` into java directory
 
-	a. add the following to `config.txt` (no brackets):
+	a. Add the following to `config.txt` (no brackets):
 
 		name: (Pitt ID)
 		pass: (database password)
