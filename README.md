@@ -9,6 +9,7 @@ Now it's just me: tps23
 1. Add config.txt into java directory
 	1.a. add the following to config.txt (no brackets):
 name: [pitt ID]
+
 pass: [database password]
 
 2. Run 'source /afs/.../1555/bash.env.unixs' to set the appropriate environment variables
