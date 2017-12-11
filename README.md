@@ -10,9 +10,9 @@ Now it's just me: tps23
 
 	a. add the following to config.txt (no brackets):
 
-name: (pitt ID)
-
-pass: (database password)
+	name: (pitt ID)
+	
+	pass: (database password)
 
 
 2. Run 'source /afs/.../1555/bash.env.unixs' to set the appropriate environment variables
