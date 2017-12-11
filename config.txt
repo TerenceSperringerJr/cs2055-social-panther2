@@ -1,2 +1,0 @@
-name: pitt01
-pass: <database password>
