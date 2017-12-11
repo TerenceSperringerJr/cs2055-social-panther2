@@ -22,8 +22,8 @@ declare
 		TEST_PASSWORD VARCHAR2 (50);
 		TEST_EMAIL VARCHAR2 (64) := 'astral@granseal.dom';
 		TEST_DOB DATE := TO_DATE('01-OCT-1993');
-		TEST_LOGGED_IN boolean;
-		TEST_BOOL_RESULT boolean;
+		TEST_LOGGED_IN integer;
+		TEST_BOOL_RESULT integer;
 		TEST_LOGOUT_TIME timestamp;
 	begin
 		--CREATE_USER
@@ -43,7 +43,7 @@ declare
 		--LOGIN
 		TEST_LOGGED_IN := LOGIN(TEST_USERID, TEST_PASSWORD);
 		
-		if TEST_LOGGED_IN = false then
+		if TEST_LOGGED_IN = 0 then
 			dbms_output.put_line('Error: GENERAL_TEST Failed LOGIN(' || TEST_USERID || ', ' || TEST_PASSWORD || ')');
 			TEST_ERRORS := TEST_ERRORS + 1;
 		end if;
@@ -53,13 +53,13 @@ declare
 		--INITIATE_FRIENDSHIP
 		TEST_BOOL_RESULT := INITIATE_FRIENDSHIP(TEST_USERID, TEST_FRIEND_ID, 'Dead men tell no tales.');
 		
-		if TEST_BOOL_RESULT = false then
+		if TEST_BOOL_RESULT = 0 then
 			dbms_output.put_line('Error: GENERAL_TEST Failed INITIATE_FRIENDSHIP(' || TEST_USERID || ', ' || TEST_FRIEND_ID || ', Dead men tell no tales.)');
 			TEST_ERRORS := TEST_ERRORS + 1;
 		else
 			--CONFIRM_FRIENDSHIP
 			TEST_BOOL_RESULT := CONFIRM_FRIENDSHIP(TEST_FRIEND_ID, TEST_USERID);
-			if TEST_BOOL_RESULT = false then
+			if TEST_BOOL_RESULT = 0 then
 				dbms_output.put_line('Error: GENERAL_TEST Failed CONFIRM_FRIENDSHIP(' || TEST_FRIEND_ID || ', ' || TEST_USERID || ')');
 				TEST_ERRORS := TEST_ERRORS + 1;
 			end if;
@@ -115,7 +115,7 @@ declare
 		end if;
 		
 		--LOGOUT
-		if TEST_LOGGED_IN = true then
+		if TEST_LOGGED_IN = 1 then
 			TEST_LOGOUT_TIME := LOG_OUT(TEST_USERID);
 			
 			if TEST_LOGOUT_TIME = NULL then
@@ -128,7 +128,7 @@ declare
 		--DROP USER
 		TEST_BOOL_RESULT := DROP_USER(TEST_USERID);
 		
-		if TEST_BOOL_RESULT = false then
+		if TEST_BOOL_RESULT = 0 then
 			dbms_output.put_line('Error: GENERAL_TEST Failed DROP_USER(' || TEST_USERID || ')');
 			TEST_ERRORS := TEST_ERRORS + 1;
 		end if;

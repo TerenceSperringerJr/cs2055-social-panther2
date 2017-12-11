@@ -41,18 +41,14 @@ END CREATE_USER;
 -- Given userID and password, login as the user in the system when an appropriate match is found.
 create or replace function
 LOGIN(USER_ID IN varchar2, USER_PASSWORD IN varchar2)
-	return boolean
+	return integer
 IS
 	login_matches integer := 0;
 begin
 	select count(USERID) into login_matches from PROFILE
 		where (USERID = USER_ID) and (PASSWORD = USER_PASSWORD);
 	
-	if login_matches = 0 then
-		return false;
-	end if;
-	
-	return true;
+	return login_matches;
 END LOGIN;
 /
 
@@ -82,16 +78,16 @@ END LOG_OUT;
 -- Attention should be paid handling integrity constraints.
 create or replace function
 DROP_USER(USER_ID in varchar2)
-	return boolean
+	return integer
 IS
 begin
 	delete from PROFILE where USERID = USER_ID;
 	--write trigger to handle all information owned solely by user on delete
 	
-	return true;
+	return 1;
 exception
 	when others then
-		return false;
+		return 0;
 END DROP_USER;
 /
 
@@ -102,7 +98,7 @@ THREE_DEGREES(USER_A in varchar2, USER_B in varchar2)
 	return SUBROUTINES.FRIENDSHIP_DEGREE
 IS
 	FRIENDSHIP SUBROUTINES.FRIENDSHIP_DEGREE;
-	RELATION_FOUND boolean := true;
+	RELATION_FOUND integer := 1;
 begin
 	begin
 		--Check Direct Friendship
@@ -158,10 +154,10 @@ END THREE_DEGREES;
 -- A last confirmation should be requested of the user before an entry is inserted into the pendingFriends relation, and success or failure feedback is displayed for the user.
 create or replace function
 INITIATE_FRIENDSHIP(SENDER in varchar2, RECEIVER in varchar2, MESSAGE in varchar2)
-	return boolean
+	return integer
 IS
 	FRIENDSHIP varchar2(20);
-	SUCCESS boolean := false;
+	SUCCESS integer := 0;
 begin
 	savepoint PRE_BEFRIEND;
 	
@@ -173,13 +169,13 @@ begin
 		FRIENDSHIP := null;
 	end;
 	
-	if FRIENDSHIP <> null then
-		return false;
+	if (FRIENDSHIP is null) = false then
+		return 0;
 	end if;
 	
 	begin
 		insert into PENDING_FRIENDS(FROMID, TOID, MESSAGE) values (SENDER, RECEIVER, MESSAGE);
-		SUCCESS := true;
+		SUCCESS := 1;
 	exception
 		when OTHERS then
 			rollback to PRE_BEFRIEND;
@@ -196,10 +192,10 @@ END INITIATE_FRIENDSHIP;
 -- The remaining requests which were not selected are declined and removed from pendingFriends and pendingGroupmembers relations.
 create or replace function
 CONFIRM_FRIENDSHIP(USERID in varchar2, REQUESTER in varchar2)
-	return boolean
+	return integer
 IS
 	REQUEST_MESSAGE varchar2(200);
-	CONFIRMED boolean := false;
+	CONFIRMED integer := 0;
 begin
 	savepoint PRECONFIRM;
 	
@@ -208,7 +204,7 @@ begin
 		insert into FRIENDS(USERID1, USERID2, JDATE, MESSAGE) values(REQUESTER, USERID, CURRENT_DATE, REQUEST_MESSAGE);
 		delete from PENDING_FRIENDS where fromID = REQUESTER and TOID = USERID;
 		
-		CONFIRMED := true;
+		CONFIRMED := 1;
 	exception
 		when OTHERS then
 			rollback to PRECONFIRM;
